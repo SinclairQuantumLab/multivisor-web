@@ -1,0 +1,32 @@
+#!/bin/bash -i
+# bash script to startup a multivisor in a conda environment
+
+
+# move working directory to the projecct folder
+echo ">>> cd to the multivisor directory..."
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# echo $SCRIPT_DIR
+cd "$SCRIPT_DIR"
+echo "<<< Working directory set to: ${PWD}"
+echo
+
+# activate local conda environment
+echo ">>> conda env activating..."
+# conda_path="${PWD}/.conda"
+conda_path="multivisor"
+conda activate "$conda_path"
+echo "<<< Local conda environment activated: $conda_path"
+echo
+echo
+
+# kill all running multivisor processes
+echo ">>> Killing all running multivisor processes..."
+pkill -f multivisor
+echo "<<< All running multivisor processes killed"
+
+# run multivisor
+echo ">>> Starting multivisor..."
+echo
+exec multivisor -c multivisor.conf
+echo
+echo "<<< End of the script"
