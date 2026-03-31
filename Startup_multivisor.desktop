@@ -1,9 +1,9 @@
 [Desktop Entry]
 Version=1.0
-Name=multivisor
-Comment=Sr3 multivisor web frontend for supervisor process control system
+Name=multivisor_web
+Comment=IMAQ multivisor web frontend for supervisor process control system
 Keywords=monitor; multivisor; supervisor; process
-Exec=/home/roku/multivisor/Startup_ubuntu
+Exec=/home/imaq-pi01/multivisor/Startup_lxterminal
 Type=Application
-Icon=/home/roku/multivisor/icon_multivisor.png
+Icon=/home/imaq-pi01/multivisor/icon_multivisor.png
 NoDisplay=false

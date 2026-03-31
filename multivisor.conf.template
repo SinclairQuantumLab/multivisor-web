@@ -1,0 +1,8 @@
+[global]
+name=IMAQ-multivisor
+; username=sinclair-admin
+; password=<usual one>
+
+; copy the below and uncomment to add each supervisor note
+; [supervisor:<supervisor name>]
+; url=<url to the node (e.g., localhost, imaq-piXX, or 192.168.50.X)>
