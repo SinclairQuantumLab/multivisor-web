@@ -1,7 +1,7 @@
 [global]
 name=IMAQ-multivisor
 ; username=sinclair-admin
-; password=<usual one>
+; password=<PASSWORD>
 
 ; copy the below and uncomment to add each supervisor note
 ; [supervisor:<supervisor name>]
