@@ -1,6 +1,5 @@
 # user gitignore
 multivisor.conf
-supervisor/multivisor-web.conf
 .env
 logs/*
 
