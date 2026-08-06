@@ -13,7 +13,7 @@ STR_CMD="cd \"$DIR_APP\"
 if [ ! -d \"$DIR_APP\" ]; then
     read -p \"Press Enter to continue...\"
 else
-    ./Startup_bash
+    /usr/bin/env bash ./Startup.sh
 
     if [ \$? -ne 0 ]; then
         read -p \"Press Enter to continue...\"

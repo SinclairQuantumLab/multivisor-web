@@ -1,4 +1,4 @@
-#!/bin/bash -i
+#!/usr/bin/env bash
 # bash script to run the specified python scirpt,
 # independent of the PWD this bash script is run from.
 
@@ -25,14 +25,9 @@ echo "<<< venv activated: $venv_path"
 echo
 echo
 
-# kill all running multivisor processes
-echo ">>> Killing all running multivisor processes..."
-pkill -f multivisor
-echo "<<< All running multivisor processes killed"
-
 # run multivisor
 echo ">>> Starting multivisor..."
 echo
-exec ./.venv/bin/multivisor -c ./multivisor.conf
+exec multivisor -c ./multivisor.conf
 echo
 echo "<<< End of the script"
