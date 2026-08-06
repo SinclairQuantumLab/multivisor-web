@@ -1,30 +1,38 @@
 # `multivisor` web dashboard to control `supervisor` process managers 
 
 ## Installation
-1. `git clone` this repo (recommeded location: `~/Projects/multivisor-web/`)
-2. make `./Startup_bash` excecutable:
+1. `git clone` this repo to `~/Projects/`
+
     ```bash
-    $ chmod +x ./Startup_bash
+    cd ~/Projects/
+    git clone https://github.com/SinclairQuantumLab/multivisor-web.git 
     ```
+
 3. Install `multivisor[web]` using `uv`
 
     ```bash
-    $ uv sync
+    uv sync
     ```
 
-3. (Optional) To make `multivisor` requires login, uncomment `username` and `password` in `multivisor.conf`'s `[global]` section:
+3. (Optional) To make `multivisor` requires login, uncomment `username` and `password` and replace `<PASSWORD>` placeholder with our usual password in `multivisor.conf`'s `[global]` section:
 
     ```ini
     [global]
-    name=sinclair-multivisor
+    name=IMAQ-multivisor
     username=sinclair-admin
-    password=<usual one>
+    password=<PASSWORD>
     ```
 
-    run the below command in terminal and optain a random hash value:
+    Run the below command in terminal and optain a random hash value:
+
     ```bash
-    $ python -c 'import os; import binascii; print(binascii.hexlify(os.urandom(32)))'
-    b'b934709240f6be65790f082b93db9340b59d975cabef57981d08c6c92b906d27' # example output
+    python -c 'import os; import binascii; print(binascii.hexlify(os.urandom(32)))'
+    ```
+
+    The example output is:
+
+    ```bash
+    b'b934709240f6be65790f082b93db9340b59d975cabef57981d08c6c92b906d27'
     ```
 
     Create `.env` file in the repo folder and add `MULTIVISOR_SECRET_KEY` with the hash value obtained (inside the `b'XXX'` binary-number indication format):
@@ -37,8 +45,8 @@
 4. Run `./Startup_bash` directly in terminal:
 
     ```bash
-    $ export $(cat ./.env | xargs) # if .env was create in Step 3 above
-    $ uv run multivisor -c multivisor.conf
+    export $(cat ./.env | xargs) # if .env was create in Step 3 above
+    uv run multivisor -c multivisor.conf
     ```
 
     Alternatively, via `supervisor` using the `supervisor/multivisor-web.conf` supervisor configuration file. Copy it to, e.g., `/etc/supervisor/conf.d`.

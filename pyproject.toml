@@ -1,9 +1,9 @@
 [project]
 name = "multivisor-web"
 version = "0.1.0"
-description = "Add your description here"
+description = "Sinclair group's IMAQ multivisor web UI server"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = "==3.11.*"
 dependencies = [
-    "multivisor[cli,web]>=6.0.3",
+    "multivisor[cli,web]==6.0.3",
 ]
