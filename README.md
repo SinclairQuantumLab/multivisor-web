@@ -1,87 +1,105 @@
-# `multivisor` web dashboard to control `supervisor` process managers 
+# Multivisor web deployment
 
-## Installation
-1. `git clone` this repo to `~/Projects/`
+This repository owns the Sinclair group configuration, service scripts, and
+locked Python environment for a Multivisor web dashboard. Application code is
+installed as a Git dependency from
+[SinclairQuantumLab/multivisor](https://github.com/SinclairQuantumLab/multivisor);
+do not copy application source into this repository.
 
-    ```bash
-    cd ~/Projects/
-    git clone https://github.com/SinclairQuantumLab/multivisor-web.git 
-    ```
+## Initial setup
 
-3. Install `multivisor[web]` using `uv`
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and clone
+this repository:
 
-    ```bash
-    uv sync
-    ```
+```console
+git clone https://github.com/SinclairQuantumLab/multivisor-web.git
+cd multivisor-web
+uv sync --frozen
+```
 
-3. (Optional) To make `multivisor` requires login, uncomment `username` and `password` and replace `<PASSWORD>` placeholder with our usual password in `multivisor.conf`'s `[global]` section:
+The committed `.python-version` selects Python 3.14. The locked dependency is
+the reviewed Multivisor Git revision declared in `pyproject.toml`; `uv sync
+--frozen` must not silently upgrade it.
 
-    ```ini
-    [global]
-    name=IMAQ-multivisor
-    username=sinclair-admin
-    password=<PASSWORD>
-    ```
+Create a local configuration from the template:
 
-    Run the below command in terminal and optain a random hash value:
+```console
+cp multivisor.conf.template multivisor.conf
+```
 
-    ```bash
-    python -c 'import os; import binascii; print(binascii.hexlify(os.urandom(32)))'
-    ```
+Add each Multivisor RPC host under its own `[supervisor:<name>]` section. The
+URL is the Multivisor RPC endpoint, normally port 9002, not Supervisor's
+HTTP/XML-RPC endpoint.
 
-    The example output is:
+To enable the built-in login, uncomment `username` and `password` in
+`multivisor.conf`, then create a local `.env` file containing a stable secret:
 
-    ```bash
-    b'b934709240f6be65790f082b93db9340b59d975cabef57981d08c6c92b906d27'
-    ```
+```console
+uv run --frozen python -c "import secrets; print(secrets.token_hex(32))"
+```
 
-    Create `.env` file in the repo folder and add `MULTIVISOR_SECRET_KEY` with the hash value obtained (inside the `b'XXX'` binary-number indication format):
+```ini
+# .env (never commit this file)
+MULTIVISOR_SECRET_KEY=<generated value>
+```
 
-    ```bash
-    # in .env file
-    MULTIVISOR_SECRET_KEY=b934709240f6be65790f082b93db9340b59d975cabef57981d08c6c92b906d27
-    ```
+## Run
 
-4. Run `./Startup_bash` directly in terminal:
+On Unix, `Startup.sh` loads `.env`, activates the prepared environment, and
+starts the dashboard:
 
-    ```bash
-    export $(cat ./.env | xargs) # if .env was create in Step 3 above
-    uv run multivisor -c multivisor.conf
-    ```
+```console
+./Startup.sh
+```
 
-    Alternatively, via `supervisor` using the `supervisor/multivisor-web.conf` supervisor configuration file. Copy it to, e.g., `/etc/supervisor/conf.d`.
+The equivalent direct command is:
 
+```console
+uv run --frozen multivisor -c multivisor.conf
+```
 
-## Known issues
-### Open issues
-- (listed: 2026/03/14) favicon would be good to be added.
+For a service, adapt `supervisor/multivisor-web.conf` to the actual project
+path. Use an absolute command and config path in production. The service
+definition and local configuration stay here; the `multivisor` executable comes
+from this repository's `.venv`.
 
+## Upgrade or rollback the application
 
-### Resolved issues
-- (listed: 2026/03/14) The webpage seems to periodically re-establish connections to the server in every 1.5 min. However, if it is accessed through an address which is not something recognized in local network (e.g., accessed from WAN via, e.g., reverse proxy (our usual case),  port forwarding)<br />
-<!-- (resolved: 2026/03/16) It was too early termination of server connection due to nginx-proxy-manager. Adding the below configuration script in *nginx-proxy-manager web UI > * -->
+This branch intentionally exercises the fork's
+`refactor/git-package-deployment` branch. It is an integration dependency, not
+a production release. Once an approved fork tag exists, pin this repository to
+that immutable tag:
 
-## Other options for centralized web UI supervisor management
+```console
+uv add "multivisor[web,cli] @ git+https://github.com/SinclairQuantumLab/multivisor.git@<release-tag>"
+uv lock
+uv sync --frozen
+```
 
-Consider other when multivisor becomes not sustainable
+Commit both `pyproject.toml` and `uv.lock` together. Before upgrading, stop the
+service and record `uv tree`; after upgrading, verify the dashboard and all
+Supervisor connections. To roll back, restore the previous two files, run
+`uv sync --frozen`, and restart.
 
-- [Supervisors](https://github.com/julien6387/supvisors): Very comprehensive dashboard. The creator of `supervisor`, [tiagocoutinho](https://github.com/tiagocoutinho) has been involved.
+Do not pin a floating branch for a production deployment. A Git dependency is
+resolved to a commit in `uv.lock`, but changing the lock later could otherwise
+pick up unrelated work.
 
-- [supervisord-monitor](https://github.com/mlazarov/supervisord-monitor): got most stars in github (957 as of 2026/03/14). Simple & organized (while not so pretty...)
+## Supervisor/RPC hosts
 
+The central web environment does not install Supervisor. Each managed host
+runs its own Supervisor and the Multivisor RPC adapter. Follow the maintained
+[RPC-host instructions](https://github.com/SinclairQuantumLab/multivisor/blob/refactor/git-package-deployment/PACKAGING.md#supervisor-and-rpc-hosts)
+for the appropriate Python runtime and installation command. Windows
+`supervisor-win` hosts remain on Python 3.12; the central dashboard may use
+Python 3.14.
 
-## Discussions
-- Q. Why Why not other web UIs?<br />
-A.
+## Repository contents
 
-- Q. Why not running in Docker? It is just a web service.<br />
-A. Because `multivisor` is not so robust or actively maintained system, and therefore it might have to
+- `multivisor.conf.template`: starting point for the untracked local config.
+- `Startup.sh`: Unix dashboard launcher.
+- `supervisor/`: example service-manager configuration.
+- `uv.lock`: reviewed, reproducible application dependency resolution.
 
-
-## Developer's note
-- The `multivisor` here was initially installed using `uv` as below:
-
-    ```bash
-    $ uv init --python 3.11
-    $ uv add "multivisor[web,cli]==6.0.3"
-    ```
+The inherited desktop-launcher files are convenience scripts for existing
+machines; update their absolute paths before using them on another host.

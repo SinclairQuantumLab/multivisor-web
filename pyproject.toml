@@ -1,9 +1,9 @@
 [project]
 name = "multivisor-web"
 version = "0.1.0"
-description = "Sinclair group's IMAQ multivisor web UI server"
+description = "Sinclair group's multivisor web dashboard deployment"
 readme = "README.md"
-requires-python = "==3.11.*"
+requires-python = ">=3.12"
 dependencies = [
-    "multivisor[cli,web]==6.0.3",
+    "multivisor[cli,web] @ git+https://github.com/SinclairQuantumLab/multivisor.git@refactor/git-package-deployment",
 ]
