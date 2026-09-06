@@ -90,9 +90,11 @@ pick up unrelated work.
 The central web environment does not install Supervisor. Each managed host
 runs its own Supervisor and the Multivisor RPC adapter. Follow the maintained
 [RPC-host instructions](https://github.com/SinclairQuantumLab/multivisor/blob/refactor/git-package-deployment/PACKAGING.md#supervisor-and-rpc-hosts)
-for the appropriate Python runtime and installation command. Windows
-`supervisor-win` hosts remain on Python 3.12; the central dashboard may use
-Python 3.14.
+for the appropriate Python runtime and installation command. The Multivisor
+RPC package supports Python 3.12–3.14. Current Windows `supervisor-win` hosts
+remain on Python 3.12 because of supervisor-win's own `pywin32` dependency;
+the central dashboard may use Python 3.14. When supervisor-win supports a
+newer interpreter, the host environment can upgrade independently.
 
 ## Repository contents
 
